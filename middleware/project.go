@@ -22,7 +22,7 @@ func ProjectMustInitialized() gin.HandlerFunc {
 		if err != nil {
 			if err == gorm.ErrRecordNotFound {
 				// 告知项目未初始化
-				c.Error(fmt.Errorf("project must initialized")).SetType(gin.ErrorTypePrivate).SetMeta(500)
+				c.Error(fmt.Errorf("project must initialized")).SetType(gin.ErrorTypePublic).SetMeta(500)
 			} else {
 				c.Error(err).SetType(gin.ErrorTypePrivate).SetMeta(500)
 			}
