@@ -10,7 +10,7 @@ import (
 func InitAdmin(routerGroup *gin.RouterGroup, db *gorm.DB) {
 	clientController := adminController.NewClientController(db)
 
-	admin := routerGroup.Group("/admin", middleware.AuthAdmin())
+	admin := routerGroup.Group("/admin", middleware.ProjectMustInitialized(), middleware.AuthAdmin())
 	{
 		admin.POST("/clients", clientController.Post)
 		admin.DELETE("/clients/:id", clientController.Delete)
