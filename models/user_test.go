@@ -1,17 +1,18 @@
-package models
+package models_test
 
 import (
 	"testing"
 	"time"
 
 	"github.com/anyingiit/GoReactResourceManagement/globalVars"
+	"github.com/anyingiit/GoReactResourceManagement/models"
 	"github.com/anyingiit/GoReactResourceManagement/structs"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
 
 func TestUser_SetPassword(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	err := user.SetPassword("password")
 	assert.NoError(t, err)
@@ -20,7 +21,7 @@ func TestUser_SetPassword(t *testing.T) {
 }
 
 func TestUser_SetPassword_InvalidPassword(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	err := user.SetPassword("pass")
 	assert.Error(t, err)
@@ -29,7 +30,7 @@ func TestUser_SetPassword_InvalidPassword(t *testing.T) {
 }
 
 func TestUser_VaildPassword(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	password := "password"
 	err := user.SetPassword(password)
@@ -39,7 +40,7 @@ func TestUser_VaildPassword(t *testing.T) {
 }
 
 func TestUser_VaildPassword_InvalidPassword(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	password := "password"
 	err := user.SetPassword(password)
@@ -49,7 +50,7 @@ func TestUser_VaildPassword_InvalidPassword(t *testing.T) {
 }
 
 func TestUser_CheckMustChangePassword(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	user.MustChangePassword = true
 	assert.True(t, user.CheckMustChangePassword())
@@ -59,18 +60,18 @@ func TestUser_CheckMustChangePassword(t *testing.T) {
 }
 
 func TestUser_AccountError(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	err := user.AccountError()
 	assert.NoError(t, err)
 
 	user.MustChangePassword = true
 	err = user.AccountError()
-	assert.EqualError(t, err, ErrUserMustChangePassword.Error())
+	assert.EqualError(t, err, models.ErrUserMustChangePassword.Error())
 }
 
 func TestUser_SetUsername(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	err := user.SetUsername("user")
 	assert.NoError(t, err)
@@ -78,7 +79,7 @@ func TestUser_SetUsername(t *testing.T) {
 }
 
 func TestUser_SetUsername_InvalidUsername(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	err := user.SetUsername("use")
 	assert.Error(t, err)
@@ -94,7 +95,7 @@ func TestUser_GenerateToken(t *testing.T) {
 		},
 	})
 
-	user := &User{
+	user := &models.User{
 		Model: gorm.Model{
 			ID: 1,
 		},
@@ -114,7 +115,7 @@ func TestUser_ParseToken(t *testing.T) {
 		},
 	})
 
-	user := &User{
+	user := &models.User{
 		Model: gorm.Model{
 			ID: 1,
 		},
@@ -127,7 +128,7 @@ func TestUser_ParseToken(t *testing.T) {
 }
 
 func TestUser_ParseToken_InvalidToken(t *testing.T) {
-	user := &User{}
+	user := &models.User{}
 
 	err := user.ParseToken("invalidToken")
 	assert.Error(t, err)
@@ -135,11 +136,11 @@ func TestUser_ParseToken_InvalidToken(t *testing.T) {
 }
 
 func TestNewUser(t *testing.T) {
-	role := Role{
+	role := models.Role{
 		Name: "admin",
 	}
 
-	user, err := NewUser("user", "password", "John Doe", 30, role)
+	user, err := models.NewUser("user", "password", "John Doe", 30, role)
 	assert.NoError(t, err)
 	assert.Equal(t, "user", user.Username)
 	assert.NotEmpty(t, user.Password)

@@ -1,10 +1,12 @@
-package utils
+package utils_test
 
 import (
 	"encoding/json"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/anyingiit/GoReactResourceManagement/utils"
 )
 
 func TestGenerateTokenAndParseToken(t *testing.T) {
@@ -18,13 +20,13 @@ func TestGenerateTokenAndParseToken(t *testing.T) {
 	issuer := "myIssuer"
 	validDuration := 10 * time.Minute
 	signingKey := "mySigningKey"
-	tokenString, err := GenerateToken(customData, issuer, validDuration, signingKey)
+	tokenString, err := utils.GenerateToken(customData, issuer, validDuration, signingKey)
 	if err != nil {
 		t.Fatalf("Failed to generate token: %v", err)
 	}
 
 	// Parse the token
-	d, err := ParseToken(tokenString, signingKey)
+	d, err := utils.ParseToken(tokenString, signingKey)
 	if err != nil {
 		t.Fatalf("Failed to parse token: %v", err)
 	}
