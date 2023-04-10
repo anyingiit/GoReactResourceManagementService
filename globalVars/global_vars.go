@@ -2,6 +2,12 @@ package globalVars
 
 import "errors"
 
+// ErrNotSet is returned when the global variable is not set
+var ErrNotSet = errors.New("global var is not set")
+
+// var alraedy set error
+var ErrAlreadySet = errors.New("global var is already set")
+
 type GlobalVars struct {
 	val     interface{}
 	isSet   bool
@@ -17,7 +23,7 @@ func newGlobalVars(varName string) *GlobalVars {
 
 func (g *GlobalVars) Set(val interface{}) error {
 	if g.isSet {
-		return errors.New("global var is already set")
+		return ErrAlreadySet
 	}
 	g.val = val
 	g.isSet = true
@@ -26,7 +32,7 @@ func (g *GlobalVars) Set(val interface{}) error {
 
 func (g *GlobalVars) Get() (interface{}, error) {
 	if !g.isSet {
-		return nil, errors.New("global var is not set")
+		return nil, ErrNotSet
 	}
 	return g.val, nil
 }
