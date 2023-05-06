@@ -50,6 +50,6 @@ func DeleteClientById(db *gorm.DB, id uint) error {
 }
 
 // Create Client
-func CreateClientClient(db *gorm.DB, client *models.Client) error {
+func CreateClient(db *gorm.DB, client *models.Client) error {
 	return db.Create(client).Error
 }

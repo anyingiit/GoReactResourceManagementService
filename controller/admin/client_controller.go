@@ -36,10 +36,10 @@ func (cc *ClientController) Post(c *gin.Context) {
 
 	// TODO: do some check
 
-	err := cc.Db.Create(&models.Client{
+	err := dao.CreateClient(cc.Db, &models.Client{
 		Name:        req.Name,
 		Description: req.Description,
-	}).Error
+	})
 
 	if err != nil {
 		c.Error(err).SetType(gin.ErrorTypePrivate)
