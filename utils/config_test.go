@@ -66,8 +66,8 @@ token:
 			},
 		},
 		Server: structs.ServerConfig{
-			Ip:   "127.0.0.1",
-			Port: 8080,
+			LocalIp:   "127.0.0.1",
+			LocalPort: 8080,
 		},
 		Token: structs.TokenConfig{
 			ExpiredTime: 10 * time.Second,
