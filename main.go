@@ -67,7 +67,7 @@ func main() {
 	router.InitRouter(g, db)
 
 	// create server address string, and print it
-	serverAddress := fmt.Sprintf("%s:%d", config.Server.Ip, config. Server.Port)
+	serverAddress := fmt.Sprintf("%s:%d", config.Server.LocalIp, config.Server.LocalPort)
 	fmt.Println("Server is running on", serverAddress)
 
 	g.Run(serverAddress)
