@@ -12,6 +12,13 @@ func InvateClientByClientID(id uint) func(*gorm.DB) *gorm.DB {
 	}
 }
 
+// InvateClientByInvateCode
+func InvateClientByInvateCode(invateCode string) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("invate_code = ?", invateCode)
+	}
+}
+
 func CreateInvateClient(db *gorm.DB, invateClient *models.InvateClient) error {
 	return db.Create(invateClient).Error
 }

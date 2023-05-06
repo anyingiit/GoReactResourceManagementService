@@ -33,3 +33,8 @@ func FirstClientSession(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (*models
 	err := query.First(&clientSession).Error
 	return &clientSession, err
 }
+
+// CreateClientSession
+func CreateClientSession(db *gorm.DB, clientSession *models.ClientSession) error {
+	return db.Create(clientSession).Error
+}
