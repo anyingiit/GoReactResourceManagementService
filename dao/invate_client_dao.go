@@ -37,3 +37,12 @@ func FirstInvateClient(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (*models.
 	err := query.First(&invateClient).Error
 	return &invateClient, err
 }
+
+// DeleteInvateClient
+func DeleteInvateClient(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) error {
+	query := db.Model(&models.InvateClient{})
+	for _, scope := range scopes {
+		query = scope(query)
+	}
+	return query.Delete(&models.InvateClient{}).Error
+}

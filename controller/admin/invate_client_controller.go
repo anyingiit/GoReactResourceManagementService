@@ -48,11 +48,19 @@ func (i *InvateClientController) Post(c *gin.Context) {
 		c.Error(fmt.Errorf("检查邀请码是否存在失败")).SetType(gin.ErrorTypePrivate).SetMeta(400)
 		return
 	}
+	if err == nil {
+		c.Error(fmt.Errorf("该客户端已创建邀请码")).SetType(gin.ErrorTypePublic).SetMeta(400)
+		return
+	}
 
 	// 确保该客户端未被Session注册
 	_, err = dao.FirstClientSession(i.Db, dao.InvateClientByClientID(clientIdUint))
 	if err != nil && err != gorm.ErrRecordNotFound {
 		c.Error(fmt.Errorf("检查Session是否存在失败")).SetType(gin.ErrorTypePrivate).SetMeta(400)
+		return
+	}
+	if err == nil {
+		c.Error(fmt.Errorf("该客户端已被Session注册")).SetType(gin.ErrorTypePublic).SetMeta(400)
 		return
 	}
 
@@ -92,5 +100,52 @@ func (i *InvateClientController) Post(c *gin.Context) {
 		"data": gin.H{
 			"invate_code": invateClient.InvateCode,
 		},
+	})
+}
+
+// 获取邀请码
+func (i *InvateClientController) Get(c *gin.Context) {
+	clientId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.Error(fmt.Errorf("id type error")).SetType(gin.ErrorTypePublic).SetMeta(400)
+		return
+	}
+	clientIdUint := uint(clientId)
+
+	invateClient, err := dao.FirstInvateClient(i.Db, dao.InvateClientByClientID(clientIdUint))
+	if err != nil {
+		c.Error(fmt.Errorf("邀请码不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "get invate code success",
+		"data":    invateClient,
+	})
+}
+
+// 删除邀请码
+func (i *InvateClientController) Delete(c *gin.Context) {
+	clientId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		c.Error(fmt.Errorf("id type error")).SetType(gin.ErrorTypePublic).SetMeta(400)
+		return
+	}
+	clientIdUint := uint(clientId)
+
+	invateClient, err := dao.FirstInvateClient(i.Db, dao.InvateClientByClientID(clientIdUint))
+	if err != nil {
+		c.Error(fmt.Errorf("邀请码不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
+		return
+	}
+
+	err = dao.DeleteInvateClient(i.Db, dao.InvateClientByClientID(invateClient.ClientID))
+	if err != nil {
+		c.Error(fmt.Errorf("删除邀请码失败")).SetType(gin.ErrorTypePublic).SetMeta(400)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "delete invate code success",
 	})
 }
