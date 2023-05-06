@@ -20,6 +20,8 @@ func InitAdmin(routerGroup *gin.RouterGroup, db *gorm.DB) {
 		admin.GET("/clients/:id", clientController.GetById)
 
 		admin.POST("/clients/:id/invitations", inviteClientController.Post)
+		admin.GET("/clients/:id/invitations", inviteClientController.Get)
+		admin.DELETE("/clients/:id/invitations", inviteClientController.Delete)
 	}
 
 }
