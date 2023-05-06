@@ -24,7 +24,13 @@ func InitDB(config *structs.DatabaseConfig) (*gorm.DB, error) {
 	}
 
 	// 自动同步数据库结构
-	err = db.AutoMigrate(&models.Sys{}, &models.Role{}, &models.User{}, &models.Client{})
+	err = db.AutoMigrate(&models.Sys{},
+		&models.Role{},
+		&models.User{},
+		&models.Client{},
+		&models.InvateClient{},
+		&models.ClientSession{},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to auto migrate sys, %v", err)
 	}
