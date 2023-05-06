@@ -27,8 +27,10 @@ type EnvironmentConfig struct {
 }
 
 type ServerConfig struct {
-	Ip   string `yaml:"ip"`
-	Port int    `yaml:"port"`
+	LocalIp    string `yaml:"local_ip"`
+	LocalPort  int    `yaml:"local_port"`
+	PublicIp   string `yaml:"public_ip"`
+	PublicPort int    `yaml:"public_port"`
 }
 
 type TokenConfig struct {

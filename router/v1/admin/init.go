@@ -9,6 +9,7 @@ import (
 
 func InitAdmin(routerGroup *gin.RouterGroup, db *gorm.DB) {
 	clientController := adminController.NewClientController(db)
+	inviteClientController := adminController.NewInvateClientController(db)
 
 	admin := routerGroup.Group("/admin", middleware.ProjectMustInitialized(), middleware.AuthAdmin())
 	{
@@ -17,6 +18,8 @@ func InitAdmin(routerGroup *gin.RouterGroup, db *gorm.DB) {
 		admin.PUT("/clients/:id", clientController.Put)
 		admin.GET("/clients", clientController.GetAll)
 		admin.GET("/clients/:id", clientController.GetById)
+
+		admin.POST("/clients/:id/invitations", inviteClientController.Post)
 	}
 
 }
