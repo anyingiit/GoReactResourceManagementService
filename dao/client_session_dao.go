@@ -7,9 +7,7 @@ import (
 
 // ClientSessionByClientID
 func ClientSessionByClientID(id uint) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("client_id = ?", id)
-	}
+	return ByField("client_id", id)
 }
 
 // FindClientSessions retrieves a list of client sessions based on given conditions.
