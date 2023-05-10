@@ -1,11 +1,7 @@
 package dao
 
-import (
-	"gorm.io/gorm"
-)
-
 // ClientSessionByClientID
-func ClientSessionByClientID(id uint) func(*gorm.DB) *gorm.DB {
+func ClientSessionByClientID(id uint) ScopeFunc {
 	return ByField("client_id", id)
 }
 

@@ -1,16 +1,12 @@
 package dao
 
-import (
-	"gorm.io/gorm"
-)
-
 // InvateClientByClientID
-func InvateClientByClientID(id uint) func(*gorm.DB) *gorm.DB {
+func InvateClientByClientID(id uint) ScopeFunc {
 	return ByField("client_id", id)
 }
 
 // InvateClientByInvateCode
-func InvateClientByInvateCode(invateCode string) func(*gorm.DB) *gorm.DB {
+func InvateClientByInvateCode(invateCode string) ScopeFunc {
 	return ByField("invate_code", invateCode)
 }
 

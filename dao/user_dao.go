@@ -1,10 +1,6 @@
 package dao
 
-import (
-	"gorm.io/gorm"
-)
-
-func UserByID(id uint) func(*gorm.DB) *gorm.DB {
+func UserByID(id uint) ScopeFunc {
 	return ByID(id)
 }
 
