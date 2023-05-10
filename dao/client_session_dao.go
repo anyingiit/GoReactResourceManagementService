@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"github.com/anyingiit/GoReactResourceManagement/models"
 	"gorm.io/gorm"
 )
 
@@ -10,6 +9,7 @@ func ClientSessionByClientID(id uint) func(*gorm.DB) *gorm.DB {
 	return ByField("client_id", id)
 }
 
+/* 使用dao通用函数替换了如下专有函数
 // FindClientSessions retrieves a list of client sessions based on given conditions.
 func FindClientSessions(db *gorm.DB, scopes ...ScopeFunc) ([]*models.ClientSession, error) {
 	var clientSessions []*models.ClientSession
@@ -28,3 +28,4 @@ func FirstClientSession(db *gorm.DB, scopes ...ScopeFunc) (*models.ClientSession
 func CreateClientSession(db *gorm.DB, clientSession *models.ClientSession) error {
 	return db.Create(clientSession).Error
 }
+*/

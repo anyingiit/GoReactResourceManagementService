@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"github.com/anyingiit/GoReactResourceManagement/models"
 	"gorm.io/gorm"
 )
 
@@ -17,6 +16,7 @@ func InvateClientByInvateCode(invateCode string) func(*gorm.DB) *gorm.DB {
 	}
 }
 
+/* 使用dao通用函数替换了如下专有函数
 func CreateInvateClient(db *gorm.DB, invateClient *models.InvateClient) error {
 	return db.Create(invateClient).Error
 }
@@ -41,3 +41,4 @@ func DeleteInvateClient(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) error {
 	}
 	return query.Delete(&models.InvateClient{}).Error
 }
+*/
