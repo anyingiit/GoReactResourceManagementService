@@ -11,9 +11,7 @@ func InvateClientByClientID(id uint) func(*gorm.DB) *gorm.DB {
 
 // InvateClientByInvateCode
 func InvateClientByInvateCode(invateCode string) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("invate_code = ?", invateCode)
-	}
+	return ByField("invate_code", invateCode)
 }
 
 /* 使用dao通用函数替换了如下专有函数
