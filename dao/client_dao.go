@@ -12,25 +12,26 @@ func ClientByID(id uint) func(*gorm.DB) *gorm.DB {
 	}
 }
 
-// find clients
-func FindClients(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) ([]*models.Client, error) {
-	var clients []*models.Client
-	query := db.Model(&models.Client{})
-	for _, scope := range scopes {
-		query = scope(query)
+// ClientsByRecordRange
+func ClientsByRecordRange(start, end int) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		offset := start - 1
+		limit := end - start + 1
+		return db.Offset(offset).Limit(limit)
 	}
-	err := query.Find(&clients).Error
+}
+
+// find clients
+func FindClients(db *gorm.DB, scopes ...ScopeFunc) ([]*models.Client, error) {
+	var clients []*models.Client
+	err := Find(db, &clients, scopes...)
 	return clients, err
 }
 
-// find client
-func FirstClient(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (*models.Client, error) {
+// first client
+func FirstClient(db *gorm.DB, scopes ...ScopeFunc) (*models.Client, error) {
 	client := models.Client{}
-	query := db.Model(&models.Client{})
-	for _, scope := range scopes {
-		query = scope(query)
-	}
-	err := query.First(&client).Error
+	err := First(db, &client, scopes...)
 	return &client, err
 }
 

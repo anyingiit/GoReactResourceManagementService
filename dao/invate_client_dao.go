@@ -23,26 +23,16 @@ func CreateInvateClient(db *gorm.DB, invateClient *models.InvateClient) error {
 	return db.Create(invateClient).Error
 }
 
-// FindInvateClients
-func FindInvateClients(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) ([]*models.InvateClient, error) {
+func FindInvateClients(db *gorm.DB, scopes ...ScopeFunc) ([]*models.InvateClient, error) {
 	var invateClients []*models.InvateClient
-	query := db.Model(&models.InvateClient{})
-	for _, scope := range scopes {
-		query = scope(query)
-	}
-	err := query.Find(&invateClients).Error
+	err := Find(db, &invateClients, scopes...)
 	return invateClients, err
 }
 
-// FindInvateClient
-func FirstInvateClient(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (*models.InvateClient, error) {
-	invateClient := models.InvateClient{}
-	query := db.Model(&models.InvateClient{})
-	for _, scope := range scopes {
-		query = scope(query)
-	}
-	err := query.First(&invateClient).Error
-	return &invateClient, err
+func FirstInvateClient(db *gorm.DB, scopes ...ScopeFunc) (*models.InvateClient, error) {
+	invateClient := new(models.InvateClient)
+	err := First(db, invateClient, scopes...)
+	return invateClient, err
 }
 
 // DeleteInvateClient
