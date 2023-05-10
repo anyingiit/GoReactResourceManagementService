@@ -5,9 +5,7 @@ import (
 )
 
 func UserByID(id uint) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("id = ?", id)
-	}
+	return ByID(id)
 }
 
 /* 使用dao通用函数替换了如下专有函数
