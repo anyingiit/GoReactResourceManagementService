@@ -12,25 +12,17 @@ func ClientSessionByClientID(id uint) func(*gorm.DB) *gorm.DB {
 	}
 }
 
-// FindClientSessions
-func FindClientSessions(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) ([]*models.ClientSession, error) {
+// FindClientSessions retrieves a list of client sessions based on given conditions.
+func FindClientSessions(db *gorm.DB, scopes ...ScopeFunc) ([]*models.ClientSession, error) {
 	var clientSessions []*models.ClientSession
-	query := db.Model(&models.ClientSession{})
-	for _, scope := range scopes {
-		query = scope(query)
-	}
-	err := query.Find(&clientSessions).Error
+	err := Find(db, &clientSessions, scopes...)
 	return clientSessions, err
 }
 
-// FirstClientSession
-func FirstClientSession(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (*models.ClientSession, error) {
-	clientSession := models.ClientSession{}
-	query := db.Model(&models.ClientSession{})
-	for _, scope := range scopes {
-		query = scope(query)
-	}
-	err := query.First(&clientSession).Error
+// FirstClientSession retrieves the first client session based on given conditions.
+func FirstClientSession(db *gorm.DB, scopes ...ScopeFunc) (*models.ClientSession, error) {
+	var clientSession models.ClientSession
+	err := First(db, &clientSession, scopes...)
 	return &clientSession, err
 }
 
