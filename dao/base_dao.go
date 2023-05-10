@@ -49,13 +49,12 @@ func First(db *gorm.DB, result interface{}, scopes ...ScopeFunc) error {
 }
 
 // Count 统计查询结果数量
-func Count(db *gorm.DB, model interface{}, scopes ...ScopeFunc) (count int64, err error) {
+func Count(db *gorm.DB, model interface{}, count *int64, scopes ...ScopeFunc) error {
 	query := db.Model(model)
 	for _, scope := range scopes {
 		query = scope(query)
 	}
-	err = query.Count(&count).Error
-	return count, err
+	return query.Count(count).Error
 }
 
 // Create 在数据库中创建记录
