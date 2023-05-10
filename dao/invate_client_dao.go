@@ -7,9 +7,7 @@ import (
 
 // InvateClientByClientID
 func InvateClientByClientID(id uint) func(*gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		return db.Where("client_id = ?", id)
-	}
+	return ByField("client_id", id)
 }
 
 // InvateClientByInvateCode
