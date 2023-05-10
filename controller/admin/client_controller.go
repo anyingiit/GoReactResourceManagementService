@@ -24,6 +24,10 @@ func NewClientController(db *gorm.DB) *ClientController {
 // Require RESTful api
 
 // POST
+// 参数：
+//
+//	@form{client_name: client name}
+//	@form{client_description: client description}
 func (cc *ClientController) Post(c *gin.Context) {
 	var req struct {
 		Name        string `form:"client_name" binding:"required"`
@@ -50,6 +54,9 @@ func (cc *ClientController) Post(c *gin.Context) {
 }
 
 // DELETE
+// 参数：
+//
+//	@param{id: client id}
 func (cc *ClientController) Delete(c *gin.Context) {
 	clientId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -61,12 +68,10 @@ func (cc *ClientController) Delete(c *gin.Context) {
 	if err := dao.Delete(cc.Db, &models.Client{}, dao.ByID(uint(clientId))); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(404)
-			return
 		} else {
 			c.Error(err).SetType(gin.ErrorTypePrivate)
 		}
 		return
-	}
 	}
 
 	c.JSON(200, gin.H{
@@ -75,6 +80,9 @@ func (cc *ClientController) Delete(c *gin.Context) {
 }
 
 // PUT
+// 参数：
+//
+//	@param{id: client id}
 func (cc *ClientController) Put(c *gin.Context) {
 	clientId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
@@ -139,6 +147,10 @@ func (cc *ClientController) GetAll(c *gin.Context) {
 	})
 }
 
+// GET get by id
+// 参数：
+//
+//	@param{id: client id}
 func (cc *ClientController) GetById(c *gin.Context) {
 	clientId, err := strconv.ParseUint(c.Param("id"), 10, 32)
 	if err != nil {
