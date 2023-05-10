@@ -79,3 +79,13 @@ func Update(db *gorm.DB, value interface{}, scopes ...ScopeFunc) error {
 	}
 	return query.Updates(value).Error
 }
+
+// Exists 检查当前条件下是否存在匹配的记录
+func Exists(db *gorm.DB, model interface{}, scopes ...ScopeFunc) (bool, error) {
+	var count int64
+	err := Count(db, model, &count, scopes...)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
