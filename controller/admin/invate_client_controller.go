@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -36,30 +37,30 @@ func (i *InvateClientController) Post(c *gin.Context) {
 	clientIdUint := uint(clientId)
 
 	// 确保客户端ID存在
-	client, err := dao.FirstClient(i.Db, dao.ClientByID(clientIdUint))
-	if err != nil {
-		c.Error(fmt.Errorf("客户端不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
+	var client models.Client
+	if err := dao.First(i.Db, &client, dao.ByID(clientIdUint)); err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.Error(fmt.Errorf("客户端不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
+		} else {
+			c.Error(err).SetType(gin.ErrorTypePrivate)
+		}
 		return
 	}
 
 	// 确保该客户端未创建邀请码
-	_, err = dao.FirstInvateClient(i.Db, dao.InvateClientByClientID(clientIdUint))
-	if err != nil && err != gorm.ErrRecordNotFound {
-		c.Error(fmt.Errorf("检查邀请码是否存在失败")).SetType(gin.ErrorTypePrivate).SetMeta(400)
+	if exists, err := dao.Exists(i.Db, &models.InvateClient{}, dao.InvateClientByClientID(clientIdUint)); err != nil {
+		c.Error(err).SetType(gin.ErrorTypePrivate)
 		return
-	}
-	if err == nil {
+	} else if exists {
 		c.Error(fmt.Errorf("该客户端已创建邀请码")).SetType(gin.ErrorTypePublic).SetMeta(400)
 		return
 	}
 
 	// 确保该客户端未被Session注册
-	_, err = dao.FirstClientSession(i.Db, dao.InvateClientByClientID(clientIdUint))
-	if err != nil && err != gorm.ErrRecordNotFound {
-		c.Error(fmt.Errorf("检查Session是否存在失败")).SetType(gin.ErrorTypePrivate).SetMeta(400)
+	if exists, err := dao.Exists(i.Db, &models.ClientSession{}, dao.ClientSessionByClientID(clientIdUint)); err != nil {
+		c.Error(err).SetType(gin.ErrorTypePrivate)
 		return
-	}
-	if err == nil {
+	} else if exists {
 		c.Error(fmt.Errorf("该客户端已被Session注册")).SetType(gin.ErrorTypePublic).SetMeta(400)
 		return
 	}
@@ -89,8 +90,7 @@ func (i *InvateClientController) Post(c *gin.Context) {
 		return
 	}
 
-	err = dao.CreateInvateClient(i.Db, invateClient)
-	if err != nil {
+	if err := dao.Create(i.Db, invateClient); err != nil {
 		c.Error(fmt.Errorf("创建邀请码记录失败")).SetType(gin.ErrorTypePublic).SetMeta(400)
 		return
 	}
@@ -112,9 +112,13 @@ func (i *InvateClientController) Get(c *gin.Context) {
 	}
 	clientIdUint := uint(clientId)
 
-	invateClient, err := dao.FirstInvateClient(i.Db, dao.InvateClientByClientID(clientIdUint))
-	if err != nil {
-		c.Error(fmt.Errorf("邀请码不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
+	invateClient := &models.InvateClient{}
+	if err := dao.First(i.Db, invateClient, dao.InvateClientByClientID(clientIdUint)); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.Error(fmt.Errorf("邀请码不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
+			return
+		}
+		c.Error(fmt.Errorf("查询邀请码记录失败")).SetType(gin.ErrorTypePrivate).SetMeta(500)
 		return
 	}
 
@@ -133,14 +137,11 @@ func (i *InvateClientController) Delete(c *gin.Context) {
 	}
 	clientIdUint := uint(clientId)
 
-	invateClient, err := dao.FirstInvateClient(i.Db, dao.InvateClientByClientID(clientIdUint))
-	if err != nil {
-		c.Error(fmt.Errorf("邀请码不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
-		return
-	}
-
-	err = dao.DeleteInvateClient(i.Db, dao.InvateClientByClientID(invateClient.ClientID))
-	if err != nil {
+	if err := dao.Delete(i.Db, &models.InvateClient{}, dao.InvateClientByClientID(clientIdUint)); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.Error(fmt.Errorf("邀请码不存在")).SetType(gin.ErrorTypePublic).SetMeta(400)
+			return
+		}
 		c.Error(fmt.Errorf("删除邀请码失败")).SetType(gin.ErrorTypePublic).SetMeta(400)
 		return
 	}
