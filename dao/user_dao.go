@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"github.com/anyingiit/GoReactResourceManagement/models"
 	"gorm.io/gorm"
 )
 
@@ -11,6 +10,7 @@ func UserByID(id uint) func(*gorm.DB) *gorm.DB {
 	}
 }
 
+/* 使用dao通用函数替换了如下专有函数
 // []*models.User 底层存储的是一个指针数组，指针指向的是models.User的实例
 func FindUsers(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) ([]*models.User, error) {
 	var users []*models.User
@@ -32,3 +32,4 @@ func FirstUser(db *gorm.DB, scopes ...func(*gorm.DB) *gorm.DB) (*models.User, er
 	err := query.First(&user).Error // First需要一个模型实例的指针
 	return &user, err
 }
+*/
