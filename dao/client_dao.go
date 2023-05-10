@@ -1,9 +1,6 @@
 package dao
 
-import (
-	"github.com/anyingiit/GoReactResourceManagement/models"
-	"gorm.io/gorm"
-)
+/*以下函数已被弃用，使用新的通用函数替代
 
 // ClientByID
 func ClientByID(id uint) func(*gorm.DB) *gorm.DB {
@@ -54,3 +51,5 @@ func DeleteClientById(db *gorm.DB, id uint) error {
 func CreateClient(db *gorm.DB, client *models.Client) error {
 	return db.Create(client).Error
 }
+
+*/

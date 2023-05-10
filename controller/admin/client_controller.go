@@ -36,12 +36,10 @@ func (cc *ClientController) Post(c *gin.Context) {
 
 	// TODO: do some check
 
-	err := dao.CreateClient(cc.Db, &models.Client{
+	if err := dao.Create(cc.Db, &models.Client{
 		Name:        req.Name,
 		Description: req.Description,
-	})
-
-	if err != nil {
+	}); err != nil {
 		c.Error(err).SetType(gin.ErrorTypePrivate)
 		return
 	}
@@ -60,16 +58,15 @@ func (cc *ClientController) Delete(c *gin.Context) {
 	}
 
 	// delete
-	err = dao.DeleteClientById(cc.Db, uint(clientId))
-
-	if err != nil {
+	if err := dao.Delete(cc.Db, &models.Client{}, dao.ByID(uint(clientId))); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(404)
 			return
 		} else {
 			c.Error(err).SetType(gin.ErrorTypePrivate)
-			return
 		}
+		return
+	}
 	}
 
 	c.JSON(200, gin.H{
@@ -94,8 +91,8 @@ func (cc *ClientController) Put(c *gin.Context) {
 		return
 	}
 
-	client, err := dao.FirstClient(cc.Db, dao.ClientByID(uint(clientId)))
-	if err != nil {
+	client := &models.Client{}
+	if err := dao.First(cc.Db, client, dao.ByID(uint(clientId))); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(404)
 			return
@@ -112,7 +109,10 @@ func (cc *ClientController) Put(c *gin.Context) {
 		client.Description = req.Description
 	}
 
-	err = dao.SaveClient(cc.Db, client)
+	if err := dao.Update(cc.Db, client); err != nil {
+		c.Error(err).SetType(gin.ErrorTypePrivate)
+		return
+	}
 
 	if err != nil {
 		c.Error(err).SetType(gin.ErrorTypePrivate)
@@ -126,7 +126,8 @@ func (cc *ClientController) Put(c *gin.Context) {
 
 // GET get all
 func (cc *ClientController) GetAll(c *gin.Context) {
-	clients, err := dao.FindClients(cc.Db)
+	clients := []models.Client{}
+	err := dao.Find(cc.Db, &clients)
 	if err != nil {
 		c.Error(err).SetType(gin.ErrorTypePrivate)
 		return
@@ -145,7 +146,8 @@ func (cc *ClientController) GetById(c *gin.Context) {
 		return
 	}
 
-	client, err := dao.FirstClient(cc.Db, dao.ClientByID(uint(clientId)))
+	client := &models.Client{}
+	err = dao.First(cc.Db, client, dao.ByID(uint(clientId)))
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(404)
