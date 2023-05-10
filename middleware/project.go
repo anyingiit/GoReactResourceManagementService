@@ -5,6 +5,7 @@ import (
 
 	"github.com/anyingiit/GoReactResourceManagement/dao"
 	"github.com/anyingiit/GoReactResourceManagement/globalVars"
+	"github.com/anyingiit/GoReactResourceManagement/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -18,8 +19,7 @@ func ProjectMustInitialized() gin.HandlerFunc {
 			return
 		}
 
-		_, err = dao.FirstSysRecord(db)
-		if err != nil {
+		if err := dao.First(db, &models.Sys{}); err != nil {
 			if err == gorm.ErrRecordNotFound {
 				// 告知项目未初始化
 				c.Error(fmt.Errorf("project must initialized")).SetType(gin.ErrorTypePublic).SetMeta(500)

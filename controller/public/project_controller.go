@@ -6,6 +6,7 @@ import (
 
 	"github.com/anyingiit/GoReactResourceManagement/dao"
 	"github.com/anyingiit/GoReactResourceManagement/db"
+	"github.com/anyingiit/GoReactResourceManagement/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -34,14 +35,17 @@ func (p *ProjectController) Post(c *gin.Context) {
 	// 当确定项目已初始化后，直接返回页面未找到
 	// 当确定项目未初始化，出现错误直接向页面返回即可
 
-	_, err := dao.FirstSysRecord(p.Db)
-	if err == nil {
+	sys := &models.Sys{}
+	if exists, err := dao.Exists(p.Db, sys); err != nil {
+		// 发生了其他错误
+		c.Error(fmt.Errorf("failed to get sys count, %v", err)).SetType(gin.ErrorTypePrivate)
+		return
+	} else if exists {
 		// 当确定项目已初始化，直接返回页面未找到
 		c.Status(http.StatusNotFound)
 		return
-	}
-
-	if err == gorm.ErrRecordNotFound { // 项目未初始化
+	} else {
+		// 项目未初始化
 		setupDataResult, err := db.SetupData(p.Db, c.PostForm("new_super_admin_password"))
 		if err != nil {
 			// 出现错误直接向页面返回即可
@@ -56,10 +60,6 @@ func (p *ProjectController) Post(c *gin.Context) {
 				"super_admin_username": setupDataResult.User.Username,
 			},
 		})
-		return
-	} else {
-		//发生了其他错误, 此时无法确定项目是否初始化
-		c.Error(fmt.Errorf("failed to get sys count, %v", err)).SetType(gin.ErrorTypePrivate)
 		return
 	}
 }
