@@ -43,18 +43,15 @@ func AuthBase(f func(user *models.User)) gin.HandlerFunc {
 		// 此时出现错误，Token是有效的，但是ID是无效的
 		// 只会出现在用户在数据库中被删除后，但是Token未过期的情况下
 
-		user, err = dao.FirstUser(db, dao.UserByID(user.ID))
-		if err != nil {
-			// 无法找到用户
+		if err := dao.First(db, user); err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
+				// 无法找到用户
 				c.Error(fmt.Errorf("用户已删除")).SetType(gin.ErrorTypePublic).SetMeta(400)
-				c.Abort()
-				return
 			} else {
 				c.Error(err).SetType(gin.ErrorTypePrivate)
-				c.Abort()
-				return
 			}
+			c.Abort()
+			return
 		}
 
 		if user.AccountError() != nil {
