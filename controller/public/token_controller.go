@@ -58,6 +58,9 @@ func (t *TokenController) Post(c *gin.Context) {
 
 	// 返回token
 	c.JSON(200, gin.H{
-		"token": token,
+		"message": "success",
+		"data": gin.H{
+			"token": token,
+		},
 	})
 }
