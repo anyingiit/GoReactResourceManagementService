@@ -59,7 +59,7 @@ func main() {
 	// 注册中间件
 	// 打印状态
 	fmt.Println("Registering middleware...")
-	g.Use(gin.Logger(), gin.Recovery(), middleware.ErrorHandler())
+	g.Use(gin.Logger(), gin.Recovery(), middleware.ErrorHandler(), middleware.Cors())
 
 	//init router
 	// 打印状态
