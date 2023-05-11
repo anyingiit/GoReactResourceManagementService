@@ -17,7 +17,7 @@ func AuthBase(f func(user *models.User)) gin.HandlerFunc {
 		authHeader := c.Request.Header.Get("Authorization")
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if len(tokenString) == 0 {
-			c.Error(fmt.Errorf("token is empty")).SetType(gin.ErrorTypePublic).SetMeta(500)
+			c.Error(fmt.Errorf("token is empty")).SetType(gin.ErrorTypePublic).SetMeta(401)
 			c.Abort()
 			return
 		}
@@ -25,7 +25,7 @@ func AuthBase(f func(user *models.User)) gin.HandlerFunc {
 		user := &models.User{}
 		err := user.ParseToken(tokenString)
 		if err != nil {
-			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(500)
+			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(403)
 			c.Abort()
 			return
 		}
@@ -46,7 +46,7 @@ func AuthBase(f func(user *models.User)) gin.HandlerFunc {
 		if err := dao.First(db, user); err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				// 无法找到用户
-				c.Error(fmt.Errorf("用户已删除")).SetType(gin.ErrorTypePublic).SetMeta(400)
+				c.Error(fmt.Errorf("用户已删除")).SetType(gin.ErrorTypePublic).SetMeta(403)
 			} else {
 				c.Error(err).SetType(gin.ErrorTypePrivate)
 			}
@@ -55,7 +55,7 @@ func AuthBase(f func(user *models.User)) gin.HandlerFunc {
 		}
 
 		if user.AccountError() != nil {
-			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(500)
+			c.Error(err).SetType(gin.ErrorTypePublic).SetMeta(403)
 			c.Abort()
 			return
 		}
@@ -68,7 +68,7 @@ func AuthAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		AuthBase(func(user *models.User) {
 			if user.Role.Name != "Admin" && user.Role.Name != "SuperAdmin" {
-				c.Error(fmt.Errorf("permission denied")).SetType(gin.ErrorTypePublic).SetMeta(500)
+				c.Error(fmt.Errorf("permission denied")).SetType(gin.ErrorTypePublic).SetMeta(403)
 				c.Abort()
 				return
 			}
@@ -82,7 +82,7 @@ func AuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		AuthBase(func(user *models.User) {
 			if user.Role.Name != "Admin" && user.Role.Name != "SuperAdmin" && user.Role.Name != "User" {
-				c.Error(fmt.Errorf("permission denied")).SetType(gin.ErrorTypePublic).SetMeta(500)
+				c.Error(fmt.Errorf("permission denied")).SetType(gin.ErrorTypePublic).SetMeta(403)
 				c.Abort()
 				return
 			}
@@ -96,7 +96,7 @@ func AuthSuperAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		AuthBase(func(user *models.User) {
 			if user.Role.Name != "SuperAdmin" {
-				c.Error(fmt.Errorf("permission denied")).SetType(gin.ErrorTypePublic).SetMeta(500)
+				c.Error(fmt.Errorf("permission denied")).SetType(gin.ErrorTypePublic).SetMeta(403)
 				c.Abort()
 				return
 			}
