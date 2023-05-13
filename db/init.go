@@ -23,16 +23,38 @@ func InitDB(config *structs.DatabaseConfig) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to set db, %v", err)
 	}
 
+	tx := db.Begin()
 	// 自动同步数据库结构
-	err = db.AutoMigrate(&models.Sys{},
+	err = tx.AutoMigrate(
+		// Sys
+		&models.Sys{},
+		// User
 		&models.Role{},
 		&models.User{},
+		// Client
 		&models.Client{},
 		&models.InvateClient{},
 		&models.ClientSession{},
+		// Task
+		&models.Task{},
+		&models.TaskParamType{},
+		&models.TaskParamValue{},
+		&models.TaskQueue{},
+		&models.TaskQueueResult{},
+		// Service
+		&models.Service{},
+		&models.ServiceStatus{},
+		&models.WebServiceType{},
+		&models.WebService{},
 	)
 	if err != nil {
+		tx.Rollback()
 		return nil, fmt.Errorf("failed to auto migrate sys, %v", err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("failed to commit, %v", err)
 	}
 
 	return db, nil
