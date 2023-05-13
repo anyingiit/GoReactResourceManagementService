@@ -10,9 +10,9 @@ import (
 
 type InvateClient struct {
 	gorm.Model
+	InvateCode string
 	ClientID   uint
 	Client     Client `gorm:"foreignKey:ClientID"`
-	InvateCode string
 }
 
 func (i *InvateClient) GenerateInvateCode(data *structs.InvateClientMessage) error {

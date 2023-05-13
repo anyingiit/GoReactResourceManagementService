@@ -7,7 +7,7 @@ import (
 
 type ClientSession struct {
 	gorm.Model
-	ClientID uint
-	Client   Client `gorm:"foreignKey:ClientID"`
 	UUID     uuid.UUID
+	ClientID uint   `gorm:"uniqueIndex:idx_client_id"`
+	Client   Client `gorm:"foreignKey:ClientID"`
 }
