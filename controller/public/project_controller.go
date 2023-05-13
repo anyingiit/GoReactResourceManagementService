@@ -46,14 +46,27 @@ func (p *ProjectController) Post(c *gin.Context) {
 		return
 	} else {
 		// 项目未初始化
-		setupDataResult, err := db.SetupData(p.Db, c.PostForm("new_super_admin_password"))
+		tx := p.Db.Begin()
+
+		setupDataResult, err := db.SetupData(tx, c.PostForm("new_super_admin_password"))
 		if err != nil {
+			tx.Rollback()
 			// 出现错误直接向页面返回即可
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
+
+		if err := tx.Commit(); err != nil {
+			tx.Rollback()
+			// 出现错误直接向页面返回即可
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err,
+			})
+			return
+		}
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "init project success",
 			"data": gin.H{
