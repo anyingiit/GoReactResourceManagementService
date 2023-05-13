@@ -13,17 +13,16 @@ type SetupDataResult struct {
 	User models.User
 }
 
+// SetupData 用于初始化项目
+// 使用时注意使用tx，以便于回滚
 func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error) {
 	// 1. 创建Sys表中的唯一一条记录
 	// 2. 创建Role表中的默认数据
 	// 3. 创建一个默认的SuperAdmin用户
 
-	tx := db.Begin()
-
 	// 创建Sys表中的唯一一条记录
 	sys := models.Sys{}
-	if tx.Model(&models.Sys{}).Create(&sys).Error != nil {
-		tx.Rollback()
+	if db.Model(&models.Sys{}).Create(&sys).Error != nil {
 		return nil, fmt.Errorf("failed to create sys")
 	}
 
@@ -32,8 +31,8 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 	roles = append(roles, models.Role{Name: "SuperAdmin", Description: "SuperAdmin can do anything"})
 	roles = append(roles, models.Role{Name: "Admin", Description: "Admin can do anything except manage admin and SuperAdmin"})
 	roles = append(roles, models.Role{Name: "User"})
-	if tx.Model(&models.Role{}).Create(&roles).Error != nil {
-		tx.Rollback()
+	if db.Model(&models.Role{}).Create(&roles).Error != nil {
+
 		return nil, fmt.Errorf("failed to create roles")
 	}
 
@@ -42,8 +41,7 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 	// 2. 创建SuperAdmin模型实体
 	// 3. 创建SuperAdmin用户
 	superAdmin := &models.Role{}
-	if tx.Model(&models.Role{}).Where("name = ?", "SuperAdmin").First(&superAdmin).Error != nil {
-		tx.Rollback()
+	if db.Model(&models.Role{}).Where("name = ?", "SuperAdmin").First(&superAdmin).Error != nil {
 		return nil, fmt.Errorf("failed to get SuperAdmin role")
 	}
 
@@ -55,22 +53,14 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 		18,
 		*superAdmin)
 	if err != nil {
-		tx.Rollback()
 		return nil, fmt.Errorf("failed to create SuperAdmin user, %v", err)
 	}
 
 	// // 需要强制修改密码
 	// newSuperAdminUser.MustChangePassword = true
 
-	if tx.Model(&models.User{}).Create(&newSuperAdminUser).Error != nil {
-		tx.Rollback()
+	if db.Model(&models.User{}).Create(&newSuperAdminUser).Error != nil {
 		return nil, fmt.Errorf("failed to create SuperAdmin user, %v", err)
-	}
-
-	// 提交
-	if tx.Commit().Error != nil { // 提交事务
-		tx.Rollback()
-		return nil, fmt.Errorf("failed to commit")
 	}
 
 	// 打印默认SuperAdmin用户的用户名和密码
