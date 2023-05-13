@@ -32,7 +32,6 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 	roles = append(roles, models.Role{Name: "Admin", Description: "Admin can do anything except manage admin and SuperAdmin"})
 	roles = append(roles, models.Role{Name: "User"})
 	if db.Model(&models.Role{}).Create(&roles).Error != nil {
-
 		return nil, fmt.Errorf("failed to create roles")
 	}
 
@@ -71,12 +70,3 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 		User: *newSuperAdminUser,
 	}, nil
 }
-
-// // check is setup data
-// func IsSetupData(db *gorm.DB) (bool, error) {
-// 	var count int64
-// 	if err := db.Model(&models.Sys{}).Count(&count).Error; err != nil {
-// 		return false, fmt.Errorf("failed to get sys count, %v", err)
-// 	}
-// 	return count > 0, nil
-// }
