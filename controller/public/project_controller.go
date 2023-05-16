@@ -58,7 +58,7 @@ func (p *ProjectController) Post(c *gin.Context) {
 			return
 		}
 
-		if err := tx.Commit(); err != nil {
+		if err := tx.Commit().Error; err != nil {
 			tx.Rollback()
 			// 出现错误直接向页面返回即可
 			c.JSON(http.StatusBadRequest, gin.H{
