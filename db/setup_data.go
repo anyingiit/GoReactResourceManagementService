@@ -66,6 +66,13 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 	fmt.Println("SuperAdmin username: ", username)
 	// fmt.Println("SuperAdmin password: ", password)
 
+	// 创建默认支持的任务
+	tasks := []models.Task{}
+	tasks = append(tasks, models.Task{Name: "ping", Description: "Ping a host"})
+	if err := dao.Create(db, &tasks); err != nil {
+		return nil, fmt.Errorf("failed to create tasks")
+	}
+
 	return &SetupDataResult{
 		User: *newSuperAdminUser,
 	}, nil
