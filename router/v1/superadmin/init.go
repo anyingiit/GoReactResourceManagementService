@@ -15,7 +15,7 @@ func InitSuperAdmin(routerGroup *gin.RouterGroup, db *gorm.DB) {
 		// resource := superadmin.Group("/:resource", middleware.AllowAllOPTIONS())
 		resource := superadmin.Group("/:resource")
 		{
-			resource.GET("", baseController.GetList)
+			resource.GET("", baseController.HandleGet)
 			resource.GET("/:id", baseController.GetOne)
 			// resource.GET("/:id/:association", baseController.GetMany)
 			resource.PUT("/:id", baseController.Update)
