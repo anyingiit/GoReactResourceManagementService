@@ -13,6 +13,9 @@ import (
 )
 
 func main() {
+	fmt.Println("Starting server...")
+
+	fmt.Println("Init Global Vars...")
 	globalVars.InitGlobalVars()
 
 	// 获取项目根目录路径, 并设置到globalVars中
@@ -22,7 +25,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("failed to get project root path, %v", err))
 	}
-	fmt.Println("Project root path is", projectRootPath)
+	// fmt.Println("Project root path is", projectRootPath)
 
 	// 打印状态
 	fmt.Println("Reading config file...")
