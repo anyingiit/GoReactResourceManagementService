@@ -37,13 +37,13 @@ func InitDB(config *structs.DatabaseConfig) (*gorm.DB, error) {
 		&models.ClientSession{},
 		// Task
 		&models.Task{},
-		&models.TaskParamType{},
-		&models.TaskParamValue{},
+
+		// Queue Task
 		&models.TaskQueue{},
 		&models.TaskQueueResult{},
+
 		// Service
 		&models.Service{},
-		&models.ServiceStatus{},
 		&models.WebServiceType{},
 		&models.WebService{},
 	)

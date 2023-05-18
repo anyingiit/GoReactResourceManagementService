@@ -4,12 +4,12 @@ import "gorm.io/gorm"
 
 type WebService struct {
 	gorm.Model
-	Host             string          `gorm:"type:varchar(100);not null;comment:服务地址"`
-	Port             string          `gorm:"type:varchar(100);not null;comment:服务端口"`
+	Host             string          `gorm:"type:varchar(100);not null;comment:服务地址" json:"host"`
+	Port             string          `gorm:"type:varchar(100);not null;comment:服务端口" json:"port"`
 	WebServiceTypeID uint            `gorm:"type:int;not null;comment:服务类型ID"`
 	WebServiceType   *WebServiceType `gorm:"foreignKey:WebServiceTypeID"`
 	ServiceID        uint            `gorm:"not null"`
-	Service          *Service        `gorm:"polymorphic:Owner;"`
+	Service          *Service        `gorm:"polymorphic:Owner;polymorphicValue:web_services"`
 }
 
 // 关于Service和WebServiceType为什么要用指针类型：
@@ -23,3 +23,5 @@ type WebService struct {
 // 3. 多对多关系，使用切片类型
 // 4. 多态关系，使用指针类型
 // 5. 多态多对多关系，使用切片类型
+
+// table name
