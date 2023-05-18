@@ -56,6 +56,7 @@ func (bc *BaseController) GetList(c *gin.Context) {
 
 	data := make([]map[string]interface{}, 0)
 	var total int64
+	//Sql注入风险
 	if err := bc.Db.Table(c.Param("resource")).
 		Count(&total).
 		Limit(params.PaginationPerPage).
@@ -78,6 +79,7 @@ func (bc *BaseController) GetList(c *gin.Context) {
 	// 	c.Header("Access-Control-Expose-Headers", "X-Header1, X-Header2")
 	c.Header("Access-Control-Expose-Headers", "Content-Range")
 	c.Header("Content-Range", fmt.Sprintf("items %d-%d/%d", start, end, total))
+	bc.SetContentRange(c, params.PaginationPage, params.PaginationPerPage, total)
 	c.JSON(http.StatusOK, gin.H{"data": data})
 }
 
