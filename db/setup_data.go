@@ -68,6 +68,28 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 	fmt.Println("SuperAdmin username: ", username)
 	// fmt.Println("SuperAdmin password: ", password)
 
+	// 创建一个User用户
+	// 1. 获取User角色
+	// 2. 创建User模型实体
+	// 3. 创建User用户
+	user := &models.Role{}
+	if db.Model(&models.Role{}).Where("name = ?", "User").First(&user).Error != nil {
+		return nil, fmt.Errorf("failed to get User role")
+	}
+
+	newUser, err := models.NewUser(uuid.NewString(),
+		"abcd1234",
+		"DefaultUser",
+		18,
+		*user)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create User user, %v", err)
+	}
+
+	if db.Model(&models.User{}).Create(&newUser).Error != nil {
+		return nil, fmt.Errorf("failed to create User user, %v", err)
+	}
+
 	// 创建默认支持的任务
 	tasks := []models.Task{}
 	tasks = append(tasks, models.Task{Name: "context_task_queue_pull", Description: "context_task_queue_pull"})
@@ -81,6 +103,7 @@ func SetupData(db *gorm.DB, superAdminPassword string) (*SetupDataResult, error)
 	tasks = append(tasks, models.Task{Name: "ping", Description: "Ping a host"})
 	tasks = append(tasks, models.Task{Name: "wait_five_minute", Description: "wait_five_minute"})
 	tasks = append(tasks, models.Task{Name: "contextl_task_queue_result_push", Description: "contextl_task_queue_result_push"})
+	tasks = append(tasks, models.Task{Name: "tcp", Description: "tcp"})
 	if err := dao.Create(db, &tasks); err != nil {
 		return nil, fmt.Errorf("failed to create tasks")
 	}
