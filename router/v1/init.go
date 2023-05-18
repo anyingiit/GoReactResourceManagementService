@@ -2,6 +2,7 @@ package v1
 
 import (
 	"github.com/anyingiit/GoReactResourceManagement/router/v1/admin"
+	"github.com/anyingiit/GoReactResourceManagement/router/v1/client"
 	"github.com/anyingiit/GoReactResourceManagement/router/v1/public"
 	"github.com/anyingiit/GoReactResourceManagement/router/v1/superadmin"
 	"github.com/anyingiit/GoReactResourceManagement/router/v1/user"
@@ -16,6 +17,7 @@ func InitV1(engin *gin.Engine, db *gorm.DB) {
 		user.InitUser(v1, db)
 		admin.InitAdmin(v1, db)
 		superadmin.InitSuperAdmin(v1, db)
+		client.InitClient(v1, db)
 	}
 
 }
