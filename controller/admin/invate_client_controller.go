@@ -80,7 +80,7 @@ func (i *InvateClientController) Post(c *gin.Context) {
 	// 1. 和服务器的通信方式
 	// 2. 一个不含任何信息的随机代码
 	err = invateClient.GenerateInvateCode(&structs.InvateClientMessage{
-		ServerIP:   projectConfig.Server.PublicIp,
+		ServerHost: projectConfig.Server.PublicIp,
 		ServerPort: projectConfig.Server.PublicPort,
 		InvateCode: utils.BytesEncodingToHashSha256HexString([]byte(uuid.New().String())),
 	})
