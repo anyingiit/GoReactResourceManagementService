@@ -46,6 +46,7 @@ func InitDB(config *structs.DatabaseConfig) (*gorm.DB, error) {
 		&models.Service{},
 		&models.WebServiceType{},
 		&models.WebService{},
+		&models.InternalService{},
 	)
 	if err != nil {
 		tx.Rollback()
