@@ -21,6 +21,15 @@ func NewBaseController(db *gorm.DB) *BaseController {
 	}
 }
 
+// HandleGet
+func (bc *BaseController) HandleGet(c *gin.Context) {
+	if c.Query("ids") != "" {
+		bc.GetMany(c)
+	} else {
+		bc.GetList(c)
+	}
+}
+
 // GetList
 func (bc *BaseController) GetList(c *gin.Context) {
 	var params struct {
