@@ -1,11 +1,26 @@
 # Source: GitHub starter workflow "Simple workflow" (MIT) — https://github.com/actions/starter-workflows/blob/main/ci/blank.yml
+#
+# Repaired by repocurator (feature 002):
+#   - `push` and `pull_request` triggered on `main`; this repository's default
+#     branch is `master`, so the workflow had never run on a push to it.
+#   - the test job ran the starter's placeholder echo, so a green check proved
+#     only that the runner could print a sentence; it now runs `go test ./...`,
+#     which exercises the pure unit tests under globalVars/, models/ and
+#     utils/ (config parsing, token generation/parsing, password hashing).
+#   - the lint job now also runs `go vet ./...`, and the test job builds the
+#     same binary the Dockerfile produces (`go build -o main .`).
+#
+# What this does not exercise: main.go opens a MySQL connection and panics
+# without a config/config.yml, and none of that exists on this runner, so
+# only `go build` and the package-level unit tests run here, not the server
+# itself.
 name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 # The workflow token is read-only by default.
@@ -41,7 +56,12 @@ jobs:
           fi
           echo "All actions are pinned to full-length commit SHAs."
 
-      # Add your project's linters below this line.
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.20'
+
+      - name: Vet
+        run: go vet ./...
 
   test:
     name: Test
@@ -52,7 +72,12 @@ jobs:
         with:
           persist-credentials: false
 
-      # Replace the step below with your project's test command. Pin any setup
-      # action you add to a full commit SHA, like the checkout step above.
-      - name: Run tests
-        run: echo "No tests yet. Replace this step with your project's test command."
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version: '1.20'
+
+      - name: Build
+        run: go build -o main .
+
+      - name: Test
+        run: go test ./...
