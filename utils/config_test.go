@@ -32,8 +32,8 @@ environments:
   production:
     debug: false
 server:
-  ip: 127.0.0.1
-  port: 8080
+  local_ip: 127.0.0.1
+  local_port: 8080
 token:
   expired_time: 10s
   signing_key: my-secret-key
